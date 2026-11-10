@@ -90,4 +90,36 @@ class PlanningMySQL implements PlanningStore {
 
         return (int) $pdo->lastInsertId();
     }
+        public function reservationsDeUtilisateur(int $utilisateurId): array
+    {
+        $requete = Database::connect()->prepare(
+            'SELECT r.id, r.room_id, rooms.name AS salle, r.starts_at, r.ends_at, r.status
+             FROM reservations r
+             JOIN rooms ON rooms.id = r.room_id
+             WHERE r.user_id = :user_id
+             ORDER BY r.starts_at DESC'
+        );
+        $requete->execute([':user_id' => $utilisateurId]);
+
+        return $requete->fetchAll();
+    }
+        public function trouverReservation(int $reservationId): ?array
+    {
+        $requete = Database::connect()->prepare(
+            'SELECT id, user_id, room_id, starts_at, ends_at, status
+             FROM reservations WHERE id = :id'
+        );
+        $requete->execute([':id' => $reservationId]);
+        $ligne = $requete->fetch();
+
+        return $ligne === false ? null : $ligne;
+    }
+
+    public function marquerAnnulee(int $reservationId): void
+    {
+        $requete = Database::connect()->prepare(
+            "UPDATE reservations SET status = 'cancelled' WHERE id = :id"
+        );
+        $requete->execute([':id' => $reservationId]);
+    }
 }

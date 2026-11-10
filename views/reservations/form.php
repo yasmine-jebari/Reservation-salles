@@ -1,6 +1,6 @@
 <h1>Vérifier la disponibilité d'une salle</h1>
 
-<form method="post" action="">
+<form method="post" action="disponibilite">
     <p>
         <label>Numéro de la salle
             <input type="number" name="salle" min="1" required

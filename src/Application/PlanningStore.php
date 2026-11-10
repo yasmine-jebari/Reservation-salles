@@ -17,4 +17,9 @@ interface PlanningStore
 
     // Nouveau : enregistre la réservation et renvoie son id
     public function creerReservation(int $utilisateurId, int $salleId, DateTimeImmutable $debut, DateTimeImmutable $fin): int;
+    // Nouveau : toutes les réservations d'un utilisateur (avec le nom de la salle)
+    public function reservationsDeUtilisateur(int $utilisateurId): array;
+
+        public function trouverReservation(int $reservationId): ?array;
+    public function marquerAnnulee(int $reservationId): void;
 }

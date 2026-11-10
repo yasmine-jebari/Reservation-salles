@@ -1,9 +1,11 @@
 <?php
 require_once __DIR__ . '/../Application/CreerReservation.php';
+require_once __DIR__ . '/../Application/ListerMesReservations.php';
+require_once __DIR__ . '/../Application/AnnulerReservation.php';
 
 class ReservationController {
     // Provisoire : sera remplacé par l'utilisateur connecté (login de ta camarade)
-    private const UTILISATEUR_PROVISOIRE = 3;
+    private const UTILISATEUR_PROVISOIRE = 4;
 
     public function store() {
         $saisie = ['salle' => 0, 'date' => '', 'debut' => '', 'fin' => ''];
@@ -29,5 +31,31 @@ class ReservationController {
         }
 
         require __DIR__ . '/../../views/reservations/form.php';
+    }
+    public function index() {                                           // ← tu colles ici
+        $action = new ListerMesReservations(planningStore());
+        $liste  = $action->executer(self::UTILISATEUR_PROVISOIRE, new DateTimeImmutable());
+
+        $aVenir  = $liste['a_venir'];
+        $passees = $liste['passees'];
+
+        require __DIR__ . '/../../views/reservations/index.php';
+}
+    public function annuler() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: mes-reservations');
+            exit;
+        }
+
+        $action  = new AnnulerReservation(planningStore());
+        $reponse = $action->executer(
+            self::UTILISATEUR_PROVISOIRE,
+            (int) ($_POST['id'] ?? 0),
+            new DateTimeImmutable()
+        );
+
+        header('Location: mes-reservations?ok=' . ($reponse['reussi'] ? '1' : '0')
+            . '&msg=' . urlencode($reponse['message']));
+        exit;
     }
 }
