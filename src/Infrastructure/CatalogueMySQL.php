@@ -9,11 +9,10 @@ class CatalogueMySQL implements CatalogueStore
     public function listerSalles(): array
     {
         $requete = Database::connect()->prepare(
-            "SELECT id, nom AS name, capacite AS capacity,
-                    batiment AS building, etage AS floor
-             FROM salles
-             WHERE statut = 'active'
-             ORDER BY nom"
+            "SELECT id, name, capacity, building, floor
+             FROM rooms
+             WHERE is_active = 1
+             ORDER BY name"
         );
 
         $requete->execute();
@@ -24,10 +23,9 @@ class CatalogueMySQL implements CatalogueStore
     public function trouverSalle(int $salleId): ?array
     {
         $requete = Database::connect()->prepare(
-            "SELECT id, nom AS name, capacite AS capacity,
-                    batiment AS building, etage AS floor
-             FROM salles
-             WHERE id = :id AND statut = 'active'"
+            "SELECT id, name, capacity, building, floor
+             FROM rooms
+             WHERE id = :id AND is_active = 1"
         );
 
         $requete->execute([':id' => $salleId]);
@@ -37,44 +35,41 @@ class CatalogueMySQL implements CatalogueStore
         return $salle ?: null;
     }
 
+    public function rechercherSalles(
+        ?int $capacite,
+        ?string $batiment,
+        ?int $equipementId
+    ): array {
 
-public function rechercherSalles(
-    ?int $capacite,
-    ?string $batiment,
-    ?int $equipementId
-): array {
+        $sql = "SELECT DISTINCT rooms.id, rooms.name,
+                       rooms.capacity, rooms.building, rooms.floor
+                FROM rooms
+                LEFT JOIN equipment_room
+                    ON rooms.id = equipment_room.room_id
+                WHERE rooms.is_active = 1";
 
-    $sql = "SELECT DISTINCT s.id, s.nom AS name,
-                   s.capacite AS capacity,
-                   s.batiment AS building,
-                   s.etage AS floor
-            FROM salles s
-            LEFT JOIN salle_equipement se
-                ON s.id = se.salle_id
-            WHERE s.statut = 'active'";
+        $parametres = [];
 
-    $parametres = [];
+        if ($capacite !== null) {
+            $sql .= " AND rooms.capacity >= :capacite";
+            $parametres[':capacite'] = $capacite;
+        }
 
-    if ($capacite !== null) {
-        $sql .= " AND s.capacite >= :capacite";
-        $parametres[':capacite'] = $capacite;
+        if ($batiment !== null && $batiment !== '') {
+            $sql .= " AND rooms.building = :batiment";
+            $parametres[':batiment'] = $batiment;
+        }
+
+        if ($equipementId !== null) {
+            $sql .= " AND equipment_room.equipment_id = :equipement";
+            $parametres[':equipement'] = $equipementId;
+        }
+
+        $sql .= " ORDER BY rooms.name";
+
+        $requete = Database::connect()->prepare($sql);
+        $requete->execute($parametres);
+
+        return $requete->fetchAll();
     }
-
-    if ($batiment !== null && $batiment !== '') {
-        $sql .= " AND s.batiment = :batiment";
-        $parametres[':batiment'] = $batiment;
-    }
-
-    if ($equipementId !== null) {
-        $sql .= " AND se.equipement_id = :equipement";
-        $parametres[':equipement'] = $equipementId;
-    }
-
-    $sql .= " ORDER BY s.nom";
-
-    $requete = Database::connect()->prepare($sql);
-    $requete->execute($parametres);
-
-    return $requete->fetchAll();
 }
-    }
