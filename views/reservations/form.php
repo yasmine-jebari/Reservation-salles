@@ -26,6 +26,7 @@
         </label>
     </p>
     <button type="submit">Vérifier</button>
+    <button type="submit" formaction="reservations">Réserver</button>
 </form>
 
 <?php if ($resultat !== null): ?>
