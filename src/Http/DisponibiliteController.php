@@ -20,6 +20,6 @@ class DisponibiliteController {
                 new DateTimeImmutable()
             );
         }
-
+$salles = catalogueStore()->listerSalles();
 require __DIR__ . '/../../views/reservations/form.php';    }
 }

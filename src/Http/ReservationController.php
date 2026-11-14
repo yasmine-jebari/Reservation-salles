@@ -5,7 +5,7 @@ require_once __DIR__ . '/../Application/AnnulerReservation.php';
 
 class ReservationController {
     // Provisoire : sera remplacé par l'utilisateur connecté (login de ta camarade)
-    private const UTILISATEUR_PROVISOIRE = 4;
+    private const UTILISATEUR_PROVISOIRE = 1;
 
     public function store() {
         $saisie = ['salle' => 0, 'date' => '', 'debut' => '', 'fin' => ''];
@@ -29,7 +29,7 @@ class ReservationController {
             // La vue affiche déjà "libre" en vert et "refus" en rouge
             $resultat = ['libre' => $reponse['reussi'], 'message' => $reponse['message']];
         }
-
+$salles = catalogueStore()->listerSalles();
         require __DIR__ . '/../../views/reservations/form.php';
     }
     public function index() {                                           // ← tu colles ici
