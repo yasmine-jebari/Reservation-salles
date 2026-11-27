@@ -5,7 +5,7 @@ require_once __DIR__ . '/../Application/AnnulerReservation.php';
 
 class ReservationController {
     // Provisoire : sera remplacé par l'utilisateur connecté (login de ta camarade)
-    private const UTILISATEUR_PROVISOIRE = 1;
+    private const UTILISATEUR_PROVISOIRE = 8;
 
     public function store() {
         $saisie = ['salle' => 0, 'date' => '', 'debut' => '', 'fin' => ''];

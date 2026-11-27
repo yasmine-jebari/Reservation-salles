@@ -50,4 +50,19 @@ class ReglesReservation {
         return $proprietaireId === $utilisateurId
             && $creneau->debut() > $maintenant;
     }
-}
+
+    public static function verifierFinFuture(Creneau $creneau, DateTimeImmutable $maintenant): void {
+        if ($creneau->fin() <= $maintenant) {
+            throw new InvalidArgumentException('La période bloquée doit se terminer dans le futur.');
+        }
+    }
+
+    public static function verifierMotif(string $motif): void {
+        if ($motif === '') {
+            throw new InvalidArgumentException('Le motif est obligatoire.');
+        }
+        if (mb_strlen($motif) > 255) {
+            throw new InvalidArgumentException('Le motif ne doit pas dépasser 255 caractères.');
+        }
+    }
+    }
