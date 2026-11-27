@@ -21,6 +21,18 @@ class ReglesReservation {
                 'Les réservations sont possibles de 04h00 à 23h00 uniquement.'
             );
         }
+
+    }
+        public static function verifierHeuresOuverture(DateTimeImmutable $debut, DateTimeImmutable $fin): void {
+        $heureDebut = $debut->format('H:i');
+        $heureFin   = $fin->format('H:i');
+
+        if ($heureDebut < self::HEURE_OUVERTURE || $heureDebut > self::HEURE_FERMETURE
+            || $heureFin < self::HEURE_OUVERTURE || $heureFin > self::HEURE_FERMETURE) {
+            throw new InvalidArgumentException(
+                'Les réservations sont possibles de 04h00 à 23h00 uniquement.'
+            );
+        }
     }
 
     public static function verifierDebutFutur(Creneau $creneau, DateTimeImmutable $maintenant): void {

@@ -22,6 +22,7 @@ class VerifierDisponibilite {
 
         // 2. Les règles du Domain (aucun accès à la base)
         try {
+            ReglesReservation::verifierHeuresOuverture($debut, $fin); 
             $creneau = new Creneau($debut, $fin);
             ReglesReservation::verifierHoraires($creneau);
             ReglesReservation::verifierDebutFutur($creneau, $maintenant);
