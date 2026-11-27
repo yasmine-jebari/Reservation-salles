@@ -165,4 +165,31 @@ class PlanningMySQL implements PlanningStore {
 
         return $requete->fetchAll(PDO::FETCH_ASSOC);
     }
+        public function occupationParSalle(DateTimeImmutable $debut, DateTimeImmutable $fin): array
+    {
+        $pdo = Database::connect();
+        $params = [
+            ':debut' => $debut->format(self::FORMAT),
+            ':fin'   => $fin->format(self::FORMAT),
+        ];
+
+        $salles = $pdo->query('SELECT id, name FROM rooms WHERE is_active = 1 ORDER BY name')
+                      ->fetchAll(PDO::FETCH_ASSOC);
+
+        $requete = $pdo->prepare(
+            "SELECT room_id, starts_at, ends_at FROM reservations
+             WHERE status = 'confirmed' AND starts_at < :fin AND ends_at > :debut"
+        );
+        $requete->execute($params);
+        $reservations = $requete->fetchAll(PDO::FETCH_ASSOC);
+
+        $requete = $pdo->prepare(
+            'SELECT room_id, starts_at, ends_at FROM maintenance_blocks
+             WHERE starts_at < :fin AND ends_at > :debut'
+        );
+        $requete->execute($params);
+        $maintenances = $requete->fetchAll(PDO::FETCH_ASSOC);
+
+        return ['salles' => $salles, 'reservations' => $reservations, 'maintenances' => $maintenances];
+    }
 }

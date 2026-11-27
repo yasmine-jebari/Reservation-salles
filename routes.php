@@ -7,4 +7,5 @@ return [
               'salles' => ['SalleController', 'catalogue'],
               'admin/maintenance' => ['MaintenanceController', 'index'],
               'admin/calendrier' => ['CalendrierController', 'index'],
+              'admin/statistiques' => ['StatistiquesController', 'index'],
             ];

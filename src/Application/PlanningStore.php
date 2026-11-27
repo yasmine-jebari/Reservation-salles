@@ -24,4 +24,5 @@ interface PlanningStore
     public function marquerAnnulee(int $reservationId): void;
         public function creerMaintenance(int $adminId, int $salleId, DateTimeImmutable $debut, DateTimeImmutable $fin, string $motif): int;
             public function occupationsDansPeriode(DateTimeImmutable $debut, DateTimeImmutable $fin): array;
+                public function occupationParSalle(DateTimeImmutable $debut, DateTimeImmutable $fin): array;
 }
