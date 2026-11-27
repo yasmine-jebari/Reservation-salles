@@ -139,4 +139,30 @@ class PlanningMySQL implements PlanningStore {
 
         return (int) $pdo->lastInsertId();
     }
+
+        public function occupationsDansPeriode(DateTimeImmutable $debut, DateTimeImmutable $fin): array
+    {
+        $pdo = Database::connect();
+        $requete = $pdo->prepare(
+            "SELECT 'reservation' AS type, rm.name AS room_name, r.starts_at, r.ends_at, u.name AS detail
+             FROM reservations r
+             JOIN rooms rm ON rm.id = r.room_id
+             JOIN users u ON u.id = r.user_id
+             WHERE r.status = 'confirmed' AND r.starts_at < :fin1 AND r.ends_at > :debut1
+             UNION ALL
+             SELECT 'maintenance' AS type, rm.name AS room_name, m.starts_at, m.ends_at, m.reason AS detail
+             FROM maintenance_blocks m
+             JOIN rooms rm ON rm.id = m.room_id
+             WHERE m.starts_at < :fin2 AND m.ends_at > :debut2
+             ORDER BY room_name, starts_at"
+        );
+        $requete->execute([
+            ':fin1'   => $fin->format(self::FORMAT),
+            ':debut1' => $debut->format(self::FORMAT),
+            ':fin2'   => $fin->format(self::FORMAT),
+            ':debut2' => $debut->format(self::FORMAT),
+        ]);
+
+        return $requete->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
