@@ -6,4 +6,5 @@ return [
             'annuler-reservation' => ['ReservationController', 'annuler'],
               'salles' => ['SalleController', 'catalogue'],
               'admin/maintenance' => ['MaintenanceController', 'index'],
+              'admin/calendrier' => ['CalendrierController', 'index'],
             ];
