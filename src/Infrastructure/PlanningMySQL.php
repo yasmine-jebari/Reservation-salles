@@ -122,4 +122,21 @@ class PlanningMySQL implements PlanningStore {
         );
         $requete->execute([':id' => $reservationId]);
     }
+        public function creerMaintenance(int $adminId, int $salleId, DateTimeImmutable $debut, DateTimeImmutable $fin, string $motif): int
+    {
+        $pdo = Database::connect();
+        $requete = $pdo->prepare(
+            'INSERT INTO maintenance_blocks (room_id, created_by, starts_at, ends_at, reason)
+             VALUES (:room_id, :created_by, :debut, :fin, :motif)'
+        );
+        $requete->execute([
+            ':room_id'    => $salleId,
+            ':created_by' => $adminId,
+            ':debut'      => $debut->format(self::FORMAT),
+            ':fin'        => $fin->format(self::FORMAT),
+            ':motif'      => $motif,
+        ]);
+
+        return (int) $pdo->lastInsertId();
+    }
 }
