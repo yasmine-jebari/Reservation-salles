@@ -7,6 +7,7 @@ return [
               'salles' => ['SalleController', 'catalogue'],
               'admin/maintenance' => ['MaintenanceController', 'index'],
               'admin/calendrier' => ['CalendrierController', 'index'],
+              'admin/statistiques' => ['StatistiquesController', 'index'],
                 'inscription' => ['AuthController', 'inscription'],
     'connexion'   => ['AuthController', 'connexion'],
     'deconnexion' => ['AuthController', 'deconnexion'],
