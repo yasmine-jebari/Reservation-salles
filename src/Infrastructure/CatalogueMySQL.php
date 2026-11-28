@@ -72,4 +72,67 @@ class CatalogueMySQL implements CatalogueStore
 
         return $requete->fetchAll();
     }
-}
+    public function listerToutesLesSalles(): array
+    {
+        $requete = Database::connect()->prepare(
+            "SELECT id, name, capacity, building, floor, is_active
+             FROM rooms
+             ORDER BY name"
+        );
+
+        $requete->execute();
+
+        return $requete->fetchAll();
+    }
+
+    public function trouverSalleAdmin(int $salleId): ?array
+    {
+        $requete = Database::connect()->prepare(
+            "SELECT id, name, capacity, building, floor, is_active
+             FROM rooms
+             WHERE id = :id"
+        );
+
+        $requete->execute([':id' => $salleId]);
+
+        $salle = $requete->fetch();
+
+        return $salle ?: null;
+    }
+
+    public function creerSalle(string $nom, int $capacite, ?string $batiment, ?int $etage): int
+    {
+        $pdo = Database::connect();
+
+        $requete = $pdo->prepare(
+            "INSERT INTO rooms (name, capacity, building, floor)
+             VALUES (:nom, :capacite, :batiment, :etage)"
+        );
+
+        $requete->execute([
+            ':nom'      => $nom,
+            ':capacite' => $capacite,
+            ':batiment' => $batiment,
+            ':etage'    => $etage,
+        ]);
+
+        return (int) $pdo->lastInsertId();
+    }
+
+    public function modifierSalle(int $salleId, string $nom, int $capacite, ?string $batiment, ?int $etage): void
+    {
+        $requete = Database::connect()->prepare(
+            "UPDATE rooms
+             SET name = :nom, capacity = :capacite, building = :batiment, floor = :etage
+             WHERE id = :id"
+        );
+
+        $requete->execute([
+            ':nom'      => $nom,
+            ':capacite' => $capacite,
+            ':batiment' => $batiment,
+            ':etage'    => $etage,
+            ':id'       => $salleId,
+        ]);
+    }
+    }
